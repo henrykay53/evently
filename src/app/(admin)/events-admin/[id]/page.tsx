@@ -16,6 +16,7 @@ export default function EditEventPage() {
   const [eventData, setEventData] = useState<Omit<EventType, "id">>({
     title: "",
     date: "",
+    time: "",
     location: "",
     description: "",
     category: "",
