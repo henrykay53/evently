@@ -10,28 +10,32 @@ export default function CreateEventPage() {
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [category, setCategory] = useState("");
+  const [banner, setBanner] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !date || !location || !description) {
-      alert("Please fill all fields");
+    if (!title || !date || !time || !location || !description || !category) {
+      alert("Please fill all required fields");
       return;
     }
 
     createEvent({
       title,
       date,
+      time,
       location,
       description,
-      image: image || "/default-event.jpg",
+      category,
+      banner: banner || "/default-event.jpg",
     });
 
     alert("Event created successfully!");
-    router.push("/admin/events");
+    router.push("/admin/events-admin");
   };
 
   return (
@@ -50,14 +54,26 @@ export default function CreateEventPage() {
           />
         </div>
 
-        <div>
-          <label className="block font-medium mb-1">Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-medium mb-1">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">Time</label>
+            <input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
         </div>
 
         <div>
@@ -68,6 +84,17 @@ export default function CreateEventPage() {
             onChange={(e) => setLocation(e.target.value)}
             className="w-full border rounded px-3 py-2"
             placeholder="City, Venue"
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">Category</label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full border rounded px-3 py-2"
+            placeholder="tech, art, fashion..."
           />
         </div>
 
@@ -83,13 +110,13 @@ export default function CreateEventPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1">Image URL (optional)</label>
+          <label className="block font-medium mb-1">Banner URL (optional)</label>
           <input
             type="text"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            value={banner}
+            onChange={(e) => setBanner(e.target.value)}
             className="w-full border rounded px-3 py-2"
-            placeholder="https://example.com/image.jpg"
+            placeholder="https://example.com/banner.jpg"
           />
         </div>
 
