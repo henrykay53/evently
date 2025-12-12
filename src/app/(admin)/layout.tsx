@@ -29,7 +29,7 @@ export default function AdminLayout({
         href={link.href}
         onClick={() => isMobile && setMobileOpen(false)}
         className={`flex items-center gap-3 px-4 py-2 rounded hover:bg-gray-200 transition-colors ${
-          active ? "bg-blue-600 text-white" : "text-gray-700"
+          active ? "bg-green-600 text-white" : "text-gray-700"
         }`}
       >
         {link.icon}

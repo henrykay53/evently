@@ -13,6 +13,10 @@ export default function AdminEventsPage() {
   const [category, setCategory] = useState("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  // PAGINATION
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
   const categories = ["all", ...Array.from(new Set(events.map((e) => e.category)))];
 
   // FILTER LOGIC
@@ -21,6 +25,10 @@ export default function AdminEventsPage() {
     const matchesCategory = category === "all" || event.category === category;
     return matchesSearch && matchesCategory;
   });
+
+  // PAGINATED RESULTS
+  const totalPages = Math.ceil(filteredEvents.length / pageSize);
+  const paginatedEvents = filteredEvents.slice((page - 1) * pageSize, page * pageSize);
 
   return (
     <div className="space-y-8">
@@ -47,7 +55,10 @@ export default function AdminEventsPage() {
             placeholder="Search events..."
             className="flex-1 outline-none"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
 
@@ -57,7 +68,10 @@ export default function AdminEventsPage() {
           <select
             className="outline-none"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setPage(1);
+            }}
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -68,48 +82,108 @@ export default function AdminEventsPage() {
         </div>
       </div>
 
-      {/* EVENT GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.map((event) => (
-          <div
-            key={event.id}
-            className="bg-white rounded-lg shadow p-4 border hover:shadow-lg transition"
+      {/* TABLE */}
+      <div className="overflow-x-auto bg-white shadow rounded-lg border">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b bg-gray-50">
+              <th className="p-3">Banner</th>
+              <th className="p-3">Title</th>
+              <th className="p-3">Date</th>
+              <th className="p-3">Location</th>
+              <th className="p-3">Category</th>
+              <th className="p-3 text-right">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {paginatedEvents.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="p-6 text-center text-gray-500">
+                  No events found.
+                </td>
+              </tr>
+            ) : (
+              paginatedEvents.map((event) => (
+                <tr key={event.id} className="border-b hover:bg-gray-50 transition">
+                  <td className="p-3">
+                    <img
+                      src={event.banner}
+                      alt={event.title}
+                      className="w-24 h-16 object-cover rounded"
+                    />
+                  </td>
+
+                  <td className="p-3 font-medium">{event.title}</td>
+                  <td className="p-3">{event.date}</td>
+                  <td className="p-3">{event.location}</td>
+
+                  <td className="p-3">
+                    <span className="text-xs bg-gray-200 px-2 py-1 rounded">
+                      {event.category}
+                    </span>
+                  </td>
+
+                  {/* ACTIONS */}
+                  <td className="p-3 flex gap-2 justify-end">
+
+                    {/* EDIT LINK */}
+                    <Link
+                      href={`/events-admin/${event.id}`}
+                      className="px-3 py-1 bg-green-600 text-white rounded flex items-center gap-1 text-sm hover:bg-green-700"
+                    >
+                      <Pencil size={14} /> Edit
+                    </Link>
+
+                    {/* DELETE */}
+                    <button
+                      onClick={() => setDeleteId(event.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded flex items-center gap-1 text-sm hover:bg-red-700"
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* PAGINATION */}
+      <div className="flex justify-center items-center gap-3 mt-4">
+
+        <button
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+          className={`px-4 py-2 rounded border ${
+            page === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-100"
+          }`}
+        >
+          Prev
+        </button>
+
+        {[...Array(totalPages)].map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setPage(i + 1)}
+            className={`px-3 py-1 rounded border ${
+              page === i + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100"
+            }`}
           >
-            <img
-              src={event.banner}
-              alt={event.title}
-              className="w-full h-40 object-cover rounded"
-            />
-
-            <h2 className="text-lg font-semibold mt-3">{event.title}</h2>
-
-            <p className="text-gray-500 text-sm">
-              {event.date} • {event.location}
-            </p>
-
-            <span className="text-xs bg-gray-200 px-2 py-1 rounded inline-block mt-2">
-              {event.category}
-            </span>
-
-            {/* ACTION BUTTONS */}
-            <div className="mt-4 flex gap-2">
-              <Link
-                href={`/events-admin/${event.id}`}
-
-                className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
-              >
-                <Pencil size={14} /> Edit
-              </Link>
-
-              <button
-                onClick={() => setDeleteId(event.id)}
-                className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
-              >
-                <Trash2 size={14} /> Delete
-              </button>
-            </div>
-          </div>
+            {i + 1}
+          </button>
         ))}
+
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage(page + 1)}
+          className={`px-4 py-2 rounded border ${
+            page === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-100"
+          }`}
+        >
+          Next
+        </button>
       </div>
 
       {/* DELETE MODAL */}

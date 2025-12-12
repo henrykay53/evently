@@ -1,4 +1,4 @@
-import Navbar from "@/components/navigation/NavBar";
+
 import ContactForm from "./ContactForm";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export default function ContactPage() {
 
   return (
    <>
-    <Navbar />
+    
     <ContactForm />
    </>
   ) 

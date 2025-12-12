@@ -17,16 +17,16 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex gap-6 font-medium">
-          <Link href="/events" className="hover:text-blue-600">
+          <Link href="/events" className="hover:text-green-900">
             Events
           </Link>
-          <Link href="/about" className="hover:text-blue-600">
+          <Link href="/about" className="hover:text-green-900">
             About
           </Link>
-          <Link href="/contact" className="hover:text-blue-600">
+          <Link href="/contact" className="hover:text-green-900">
             Contact
           </Link>
-          <Link href="/admin" className="hover:text-blue-600">
+          <Link href="/admin" className="hover:text-green-900">
             Admin
           </Link>
         </div>
